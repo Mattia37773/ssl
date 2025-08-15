@@ -1,19 +1,20 @@
 #!/bin/bash
 
-# Farbe für die Textausgabe
+# Green Color 
 color_green() {
     tput setaf 46
     echo "$1"
     tput sgr0
 }
 
+# Red Color
 color_red() {
     tput setaf 196
     echo "$1"
     tput sgr0
 }
 
-# Seätzt den Basisbefehl fest
+# sets the base command
 command=$1
 shift
 echo ""
@@ -22,7 +23,7 @@ case "$command" in
 
     # *!SECTION Validation
 
-    # zeigt das Ablaufsdatum einer File an 
+    # show the expire date of a file
     "date")
         basedir=$1
         shift
@@ -45,7 +46,7 @@ case "$command" in
         openssl x509 -enddate -noout -in $nginxfile
     ;;
 
-    # überprüft ob das ca bundle und nginx zusammen passen
+    # checks the ca bundle and the nginx.crt
     ca-nginx)
         basedir=$1
         shift
@@ -68,7 +69,7 @@ case "$command" in
         openssl verify -CAfile $cabundle -show_chain $nginxfile
     ;;
 
-    # chekct die daten im nginx.crt
+    # checks the nginx.crt
     solo-nginx)
         basedir=$1
         shift
@@ -91,7 +92,7 @@ case "$command" in
         openssl x509 -in $nginxfile -noout -text
     ;;
 
-    # überprüft ob der key und nginx zusammen passen
+    # compares key to nginx.crt
     key-nginx)
         basedir=$1
         shift
@@ -117,12 +118,12 @@ case "$command" in
         openssl rsa -noout -modulus -in $keyfile | openssl md5
     ;;
 
-    # zeigt das Ablaufsdatum aller nginx crt's in allen sachen
+    # shows all expiration dates of all nginx.crt's
     all-cert-date)
         find . -name '*.nginx.crt' -exec sh -c 'for cert; do echo "$(openssl x509 -enddate -noout -in "$cert" | cut -d= -f2) $cert"; done' sh {} + | sort -r
     ;;
 
-    # checkt online ob das zertifkat gültig ist
+    # online validation check
     online)
         domain=$1
         shift
@@ -140,7 +141,7 @@ case "$command" in
 
     # *!SECTION creating 
 
-    # bundelt die dateien zu einem nginx crt
+    # bundles the files in a nginx.crt
     nginx|nginx-create|new-ssl)
         basedir=$1
         shift
